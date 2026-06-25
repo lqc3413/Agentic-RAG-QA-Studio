@@ -1,0 +1,330 @@
+@import './variables.css';
+@import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap';
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 平滑主题过渡动画 */
+body, .app-sidebar, .app-header, .conversation-panel, .inspector-panel, .doc-item, .glass-card, .content-card, .chat-textarea, .chat-input-container, .textarea-row, .logo-dot {
+  transition: background-color var(--transition-normal), color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(9, 11, 30, 0.08);
+  border-radius: var(--border-radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(9, 11, 30, 0.16);
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: saturate(180%) var(--glass-blur);
+  -webkit-backdrop-filter: saturate(180%) var(--glass-blur);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: var(--border-color-hover);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+/* Element Plus Custom Overrides for Light style */
+.el-loading-mask {
+  background-color: rgba(249, 250, 252, 0.8) !important;
+  backdrop-filter: var(--glass-blur);
+}
+
+.el-dialog {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+}
+
+.el-dialog__title {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.el-dialog__body {
+  color: var(--text-secondary) !important;
+}
+
+.el-message-box {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+}
+
+.el-message-box__title {
+  color: var(--text-primary) !important;
+}
+
+.el-message-box__content {
+  color: var(--text-secondary) !important;
+}
+
+.el-message {
+  border-radius: var(--border-radius-md) !important;
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.el-collapse {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.el-collapse-item__header {
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  height: 48px !important;
+}
+
+.el-collapse-item__wrap {
+  background-color: transparent !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.el-collapse-item__content {
+  color: var(--text-secondary) !important;
+  padding: 12px 4px !important;
+}
+
+/* Global Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(59, 130, 246, 0.35);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+.glow-pulse {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+/* ==========================================================================
+   Element Plus Dark Theme Component Overrides
+   ========================================================================== */
+
+/* 1. scrollbar in dark mode */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* 2. input, select, textarea and input-number */
+[data-theme="dark"] .el-input__wrapper,
+[data-theme="dark"] .el-textarea__inner,
+[data-theme="dark"] .el-select__wrapper {
+  background-color: var(--bg-tertiary) !important;
+  box-shadow: 0 0 0 1px var(--border-color) inset !important;
+  transition: all var(--transition-fast) ease !important;
+}
+
+[data-theme="dark"] .el-input__wrapper:hover,
+[data-theme="dark"] .el-textarea__inner:hover,
+[data-theme="dark"] .el-select__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--border-color-hover) inset !important;
+}
+
+[data-theme="dark"] .el-input__wrapper.is-focus,
+[data-theme="dark"] .el-textarea__inner:focus,
+[data-theme="dark"] .el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--color-primary) inset, 0 0 0 4px var(--border-glow) !important;
+}
+
+[data-theme="dark"] .el-input__inner,
+[data-theme="dark"] .el-textarea__inner,
+[data-theme="dark"] .el-select__wrapper .el-select__placeholder {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .el-input__inner::placeholder,
+[data-theme="dark"] .el-textarea__inner::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* 3. select dropdowns & poppers */
+[data-theme="dark"] .el-popper.is-light,
+[data-theme="dark"] .el-select__popper.el-popper {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+[data-theme="dark"] .el-popper.is-light .el-popper__arrow::before,
+[data-theme="dark"] .el-select__popper.el-popper .el-popper__arrow::before {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .el-select-dropdown__item {
+  color: var(--text-secondary) !important;
+  font-weight: 500 !important;
+  transition: all var(--transition-fast) ease !important;
+}
+
+[data-theme="dark"] .el-select-dropdown__item.is-hovering {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .el-select-dropdown__item.is-selected {
+  color: var(--color-primary) !important;
+  background-color: rgba(0, 133, 255, 0.1) !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dark"] .el-select-group__title {
+  color: var(--text-muted) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+
+/* 4. input number decrease/increase buttons */
+[data-theme="dark"] .el-input-number__decrease,
+[data-theme="dark"] .el-input-number__increase {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  transition: all var(--transition-fast) ease !important;
+}
+
+[data-theme="dark"] .el-input-number__decrease:hover,
+[data-theme="dark"] .el-input-number__increase:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color-hover) !important;
+}
+
+[data-theme="dark"] .el-input-number__decrease.is-disabled,
+[data-theme="dark"] .el-input-number__increase.is-disabled {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-muted) !important;
+  opacity: 0.5 !important;
+}
+
+/* 5. sliders */
+[data-theme="dark"] .el-slider__runway {
+  background-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .el-slider__bar {
+  background: var(--brand-gradient) !important;
+}
+
+[data-theme="dark"] .el-slider__button {
+  background-color: var(--bg-tertiary) !important;
+  border: 2px solid var(--color-primary) !important;
+  box-shadow: 0 0 8px rgba(0, 133, 255, 0.4) !important;
+}
+
+/* 6. segmented control */
+[data-theme="dark"] .el-segmented {
+  background-color: var(--bg-tertiary) !important;
+  padding: 3px !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .el-segmented__item {
+  color: var(--text-secondary) !important;
+  transition: all var(--transition-fast) ease !important;
+}
+
+[data-theme="dark"] .el-segmented__item.is-selected {
+  background-color: var(--bg-secondary) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* 7. default buttons (e.g. Cancel button) */
+[data-theme="dark"] .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info) {
+  background-color: var(--bg-tertiary) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  transition: all var(--transition-fast) ease !important;
+}
+
+[data-theme="dark"] .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info):hover,
+[data-theme="dark"] .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info):focus,
+[data-theme="dark"] .el-button:not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info):active {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 8. chat assistant message bubble under dark mode */
+[data-theme="dark"] .assistant .content-card {
+  background-color: var(--bg-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .details-content {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+[data-theme="dark"] .markdown-body code {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: var(--color-danger-hover) !important;
+}

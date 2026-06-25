@@ -1,0 +1,310 @@
+[
+  {
+    "id": "synthetic_spring_1",
+    "question": "在 Spring AOP 中，底层动态代理机制是如何根据目标类特征选择 JDK 动态代理或 CGLIB 动态代理的？",
+    "expected_keywords": [
+      "动态代理",
+      "JDK 动态代理",
+      "CGLIB 动态代理",
+      "接口"
+    ],
+    "expected_sources": [
+      "Spring"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_git_2",
+    "question": "在Git版本控制中，当合并分支时，如果不产生新的合并提交而只是移动当前分支指针到目标分支，这种线性化的合并方式被称为什么？",
+    "expected_keywords": [
+      "Fast forward",
+      "合并",
+      "分支指针"
+    ],
+    "expected_sources": [
+      "Git"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_git_3",
+    "question": "Explain how branches in Git are implemented using pointers, including the roles of branch pointers and the HEAD pointer.",
+    "expected_keywords": [
+      "pointers",
+      "HEAD pointer",
+      "branch pointer",
+      "timeline"
+    ],
+    "expected_sources": [
+      "Git"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_git_4",
+    "question": "在使用Git进行分支切换时，如何安全地保存当前分支上未提交的修改，以便后续恢复？",
+    "expected_keywords": [
+      "git stash",
+      "储藏",
+      "工作区",
+      "栈"
+    ],
+    "expected_sources": [
+      "Git"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_systemdesign_5",
+    "question": "根据工业级生产系统的高可用标准，99.99%（4个9）的可用性指标通常意味着一年内允许的停机时间最长是多少？",
+    "expected_keywords": [
+      "99.99%",
+      "4个9",
+      "停机时间",
+      "52.6 分钟"
+    ],
+    "expected_sources": [
+      "SystemDesign"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_javaconcurrency_6",
+    "question": "请详细描述Java中synchronized锁从无锁到重量级锁的整个升级过程。",
+    "expected_keywords": [
+      "偏向锁",
+      "轻量级锁",
+      "自旋",
+      "重量级锁"
+    ],
+    "expected_sources": [
+      "JavaConcurrency"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_7",
+    "question": "In the context of Redis, what two core event types are defined for its internal event-driven architecture?",
+    "expected_keywords": [
+      "file event",
+      "time event"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_8",
+    "question": "在 Redis 中，如果一个数据结构需要存储包含键值对的无序散列表，并能进行添加、获取、移除单个键值对以及检查某个键是否存在的操作，应该使用哪种数据类型？",
+    "expected_keywords": [
+      "HASH",
+      "无序散列表",
+      "键值对",
+      "添加"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_9",
+    "question": "Given a Redis list named 'list-key', write the sequence of commands to add two 'item' entries and one 'item2' entry to the right, retrieve and show the entire list, access the element at index 1, and then remove and return an element from the left. What commands and order are used?",
+    "expected_keywords": [
+      "rpush",
+      "lrange",
+      "lindex",
+      "lpop"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_10",
+    "question": "How does Redis HSET command respond when setting a sub-key that already exists in a hash, and what is the return value indicating?",
+    "expected_keywords": [
+      "hset",
+      "hash-key",
+      "integer",
+      "0"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_11",
+    "question": "在Redis字典的渐进式rehash过程中，rehashidx字段的作用是什么？rehash操作是如何利用该字段将数据从旧哈希表迁移到新哈希表的？",
+    "expected_keywords": [
+      "渐进式rehash",
+      "rehashidx",
+      "dictht",
+      "dictEntry"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_12",
+    "question": "In the context of in-memory data stores, how do Redis and Memcached differ in terms of data persistence and memory management to prevent fragmentation?",
+    "expected_keywords": [
+      "value swap to disk",
+      "data in memory",
+      "specific-length blocks",
+      "memory fragmentation"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_13",
+    "question": "在Redis的AOF持久化中，有三个同步选项：always、everysec和no。使用时，哪个选项能够在服务器性能和数据安全之间取得较好平衡，以及其原因是什么？",
+    "expected_keywords": [
+      "everysec",
+      "每秒同步一次",
+      "系统崩溃",
+      "AOF"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_14",
+    "question": "Redis的文件事件处理基于哪种设计模式，使用什么技术监听多个套接字，并由哪个组件负责调度事件处理器？",
+    "expected_keywords": [
+      "Reactor模式",
+      "I/O多路复用",
+      "文件事件分派器",
+      "套接字"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_redis_15",
+    "question": "In Redis server event loop, how is the maximum blocking time for the aeApiPoll function determined to handle both file and time events?",
+    "expected_keywords": [
+      "aeSearchNearestTimer",
+      "remaind_ms",
+      "timeval",
+      "aeApiPoll"
+    ],
+    "expected_sources": [
+      "Redis"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_16",
+    "question": "为什么 MySQL 默认的存储引擎 InnoDB 采用 B+ 树索引结构，而不用 B 树？",
+    "expected_keywords": [
+      "B+ Tree 原理",
+      "MySQL 索引",
+      "InnoDB"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_17",
+    "question": "在多列索引设计原则中，为什么建议将 customer_id 列而非 staff_id 列放在索引顺序的前面？",
+    "expected_keywords": [
+      "索引列的顺序",
+      "选择性",
+      "区分度",
+      "选择性最强"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_18",
+    "question": "在使用 Explain 分析 SELECT 查询语句时，哪些关键字段对于判断和优化查询性能最为重要？",
+    "expected_keywords": [
+      "select_type",
+      "key",
+      "rows",
+      "查询类型"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_19",
+    "question": "在MySQL默认的InnoDB存储引擎中，当使用可重复读（REPEATABLE READ）隔离级别时，具体是通过什么技术组合来防止幻读现象的？",
+    "expected_keywords": [
+      "可重复读",
+      "多版本并发控制",
+      "MVCC",
+      "Next-Key Locking"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_20",
+    "question": "在MySQL中，TINYINT、SMALLINT、MEDIUMINT、INT和BIGINT分别使用多少位存储空间？",
+    "expected_keywords": [
+      "TINYINT",
+      "8",
+      "16",
+      "24",
+      "32",
+      "64"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_21",
+    "question": "MySQL中的DATETIME和TIMESTAMP类型在存储范围、存储空间、时区相关性及默认行为方面有何主要区别？",
+    "expected_keywords": [
+      "DATETIME",
+      "TIMESTAMP",
+      "时区无关",
+      "时区有关",
+      "存储空间",
+      "默认值"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  },
+  {
+    "id": "synthetic_mysql_22",
+    "question": "What are the common challenges associated with database sharding and their typical solutions?",
+    "expected_keywords": [
+      "分布式事务",
+      "XA 接口",
+      "全局唯一 ID",
+      "分布式 ID 生成器"
+    ],
+    "expected_sources": [
+      "MySQL"
+    ],
+    "expected_answerable": true
+  }
+]

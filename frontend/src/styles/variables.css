@@ -1,0 +1,137 @@
+:root {
+  /* Premium Light Theme Color System (Script style from Dribbble) */
+  --bg-primary: #f9fafc;            /* Alabaster */
+  --bg-secondary: #ffffff;          /* White panel */
+  --bg-tertiary: #f1f5f9;           /* Light gray */
+  --bg-surface: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  
+  --border-color: #e5e7eb;          /* Light gray border */
+  --border-color-hover: #cbd5e1;
+  --border-glow: rgba(0, 133, 255, 0.15);
+  
+  /* Accent Colors (Style Guide) */
+  --color-primary: #0085FF;         /* Azure Radiance */
+  --color-primary-hover: #009eff;   /* Dodger Blue */
+  --color-primary-bg: #eff6ff;      /* Light blue capsule bg */
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-success-bg: #ecfdf5;
+  --color-warning: #faad14;
+  --color-warning-hover: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-danger: #ff4d4f;
+  --color-danger-hover: #ff7875;
+  --color-danger-bg: #fff1f0;
+  
+  /* Text Colors (Cod Gray theme) */
+  --text-primary: #090B1E;          /* Cod Gray */
+  --text-secondary: #475569;        /* Slate Gray */
+  --text-muted: #8b9bb4;            /* Muted Blue-Gray */
+  
+  /* Typography */
+  --font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', Menlo, Monaco, monospace;
+  
+  /* Shadow & Blur */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(9, 11, 30, 0.05), 0 2px 6px -1px rgba(9, 11, 30, 0.03);
+  --shadow-lg: 0 16px 32px -4px rgba(9, 11, 30, 0.08), 0 4px 12px -2px rgba(9, 11, 30, 0.04);
+  --shadow-glow: 0 0 15px rgba(0, 133, 255, 0.08);
+  
+  --glass-blur: blur(20px);
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Brand Gradient (Dodger Blue to Purple) */
+  --brand-gradient: linear-gradient(135deg, #009EFF 0%, #9360FF 100%);
+
+  /* Element Plus Theme Variables Mapping for Light Theme */
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-hover: var(--color-primary-hover);
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  
+  --el-text-color-primary: var(--text-primary);
+  --el-text-color-regular: var(--text-secondary);
+  --el-text-color-secondary: var(--text-muted);
+  --el-text-color-placeholder: var(--text-muted);
+  
+  --el-border-color: var(--border-color);
+  --el-border-color-light: var(--border-color);
+  --el-border-color-lighter: var(--border-color);
+  --el-border-color-extra-light: var(--border-color);
+  --el-border-color-hover: var(--border-color-hover);
+  
+  --el-fill-color-blank: var(--bg-secondary);
+  --el-bg-color-overlay: var(--bg-secondary);
+  --el-fill-color-light: var(--bg-tertiary);
+  --el-fill-color-lighter: var(--bg-primary);
+  
+  --el-border-radius-base: var(--border-radius-md);
+  --el-border-radius-small: var(--border-radius-sm);
+}
+
+[data-theme="dark"] {
+  /* Premium Dark Theme Color System (Script style night version) */
+  --bg-primary: #090B16;            /* Deep navy night */
+  --bg-secondary: #121528;          /* Midnight panel */
+  --bg-tertiary: #191C35;           /* Slate midnight */
+  --bg-surface: #121528;
+  --bg-glass: rgba(18, 21, 40, 0.85);
+  
+  --border-color: #24294D;          /* Dark navy border */
+  --border-color-hover: #33396b;
+  --border-glow: rgba(0, 133, 255, 0.25);
+  
+  /* Accent Colors (Dark Mode Adapted) */
+  --color-primary: #0085FF;         
+  --color-primary-hover: #339DFF;   
+  --color-primary-bg: rgba(0, 133, 255, 0.12); /* Deep blue bg */
+  
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-warning-bg: rgba(250, 173, 20, 0.1);
+  --color-danger-bg: rgba(255, 77, 79, 0.1);
+  
+  /* Text Colors (White Radiance) */
+  --text-primary: #F8FAFC;          /* Off-white */
+  --text-secondary: #94A3B8;        /* Slate gray */
+  --text-muted: #64748B;            /* Dark slate */
+  
+  /* Shadow & Blur (Glowing deep shadows) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 2px 8px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 24px 48px -8px rgba(0, 0, 0, 0.5), 0 8px 16px -4px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 18px rgba(0, 133, 255, 0.15);
+
+  /* Element Plus Theme Variables Mapping for Dark Theme */
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-hover: var(--color-primary-hover);
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  
+  --el-text-color-primary: var(--text-primary);
+  --el-text-color-regular: var(--text-secondary);
+  --el-text-color-secondary: var(--text-muted);
+  --el-text-color-placeholder: var(--text-muted);
+  
+  --el-border-color: var(--border-color);
+  --el-border-color-light: var(--border-color);
+  --el-border-color-lighter: var(--border-color);
+  --el-border-color-extra-light: var(--border-color);
+  --el-border-color-hover: var(--border-color-hover);
+  
+  --el-fill-color-blank: var(--bg-tertiary);
+  --el-bg-color-overlay: var(--bg-secondary);
+  --el-fill-color-light: rgba(255, 255, 255, 0.05);
+  --el-fill-color-lighter: rgba(255, 255, 255, 0.02);
+  
+  --el-border-radius-base: var(--border-radius-md);
+  --el-border-radius-small: var(--border-radius-sm);
+}

@@ -1,0 +1,25 @@
+fastembed==0.8.0
+fastapi==0.136.3
+# Retained for legacy notebooks that still demonstrate Gradio usage.
+gradio==6.14.0
+ipykernel==7.2.0
+langchain-huggingface==1.2.2
+langchain-ollama==1.1.0
+langchain-openai==1.1.6
+langchain-qdrant==1.1.0
+langchain-text-splitters==1.1.2
+langfuse==4.6.1
+langgraph==1.2.0
+pymupdf4llm==1.27.2.3
+protobuf==6.33.6
+python-dotenv==1.2.2
+python-multipart==0.0.29
+sentence-transformers==5.5.0
+tiktoken==0.13.0
+uvicorn==0.48.0
+langgraph-checkpoint-sqlite
+aiosqlite
+pyjwt
+bcrypt
+psycopg[binary,pool]>=3.1.0
+langgraph-checkpoint-postgres>=2.0.0

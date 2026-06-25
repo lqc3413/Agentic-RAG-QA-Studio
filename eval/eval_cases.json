@@ -1,0 +1,30 @@
+[
+  {
+    "id": "bluewhale_overview",
+    "question": "蓝鲸系统是什么？",
+    "expected_keywords": ["虚构", "RAG", "智能学习助手"],
+    "expected_sources": ["bluewhale_system_full_rag_demo"],
+    "expected_answerable": true
+  },
+  {
+    "id": "bluewhale_modules",
+    "question": "蓝鲸系统有哪些核心模块？",
+    "expected_keywords": ["文档入库", "检索问答", "学习计划"],
+    "expected_sources": ["bluewhale_system_full_rag_demo"],
+    "expected_answerable": true
+  },
+  {
+    "id": "phase5_metadata",
+    "question": "第五阶段文档管理增强需要保存哪些文档元数据？",
+    "expected_keywords": ["parent chunk", "child chunk", "embedding", "入库状态"],
+    "expected_sources": ["PHASE_5_DOCUMENT_MANAGEMENT_PLAN"],
+    "expected_answerable": true
+  },
+  {
+    "id": "phase5_clear",
+    "question": "第五阶段清空知识库时需要同步清理什么？",
+    "expected_keywords": ["metadata", "document_metadata", "清空"],
+    "expected_sources": ["PHASE_5_DOCUMENT_MANAGEMENT_PLAN"],
+    "expected_answerable": true
+  }
+]

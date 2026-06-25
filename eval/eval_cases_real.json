@@ -1,0 +1,30 @@
+[
+  {
+    "id": "mysql_bplus_tree",
+    "question": "B+ Tree 的原理是什么？它在索引中有什么优势？",
+    "expected_keywords": ["B+", "索引", "叶子节点"],
+    "expected_sources": ["MySQL"],
+    "expected_answerable": true
+  },
+  {
+    "id": "mysql_vs_myisam",
+    "question": "InnoDB 和 MyISAM 存储引擎有什么区别？",
+    "expected_keywords": ["行级锁", "事务", "外键"],
+    "expected_sources": ["MySQL"],
+    "expected_answerable": true
+  },
+  {
+    "id": "redis_data_types",
+    "question": "Redis 主要支持哪些基本数据类型？",
+    "expected_keywords": ["string", "list", "set", "hash", "zset"],
+    "expected_sources": ["Redis"],
+    "expected_answerable": true
+  },
+  {
+    "id": "redis_vs_memcached",
+    "question": "Redis 与 Memcached 的主要区别和优势是什么？",
+    "expected_keywords": ["持久化", "数据类型", "Memcached"],
+    "expected_sources": ["Redis"],
+    "expected_answerable": true
+  }
+]
