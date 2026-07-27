@@ -29,7 +29,6 @@
         </svg>
       </div>
       <span class="empty-title">知识库为空</span>
-      <span class="empty-desc">上传 PDF 或 Markdown 后，文档会出现在我的文档或公共文档中。</span>
     </div>
 
     <div v-else class="section-list">
@@ -218,13 +217,6 @@ onMounted(() => {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 6px;
-}
-
-.empty-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  max-width: 340px;
-  line-height: 1.5;
 }
 
 .section-list {

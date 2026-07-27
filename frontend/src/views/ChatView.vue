@@ -5,7 +5,6 @@
         <div class="header-left">
           <div class="header-info">
             <h2>知识库智能检索问答</h2>
-            <p class="subtitle">与您的 RAG 知识库对话，右侧控制台展示当前会话最新回答的推理与检索 Trace。</p>
           </div>
         </div>
 
@@ -42,7 +41,6 @@
         <div class="message-list-container">
           <div v-if="chatStore.messages.length === 0" class="welcome-box">
             <h2 class="welcome-title">欢迎使用 Agentic RAG Studio</h2>
-            <p class="welcome-subtitle">输入任务或问题，智能助手将为您提供基于知识库的精准解答。</p>
           </div>
 
           <MessageBubble
@@ -307,15 +305,6 @@ const handleResetCurrentSession = () => {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.header-info .subtitle {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .header-actions {
@@ -656,16 +645,8 @@ const handleResetCurrentSession = () => {
   font-size: 26px;
   font-weight: 850;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 0;
   letter-spacing: -0.5px;
-}
-
-.welcome-subtitle {
-  font-size: 13.5px;
-  color: var(--text-muted);
-  margin-bottom: 28px;
-  max-width: 440px;
-  line-height: 1.5;
 }
 
 .starter-grid {
@@ -737,10 +718,6 @@ const handleResetCurrentSession = () => {
   .panel-header {
     padding: 0 16px;
     height: 56px;
-  }
-
-  .header-info .subtitle {
-    display: none;
   }
 
   .message-list {

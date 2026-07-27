@@ -14,7 +14,6 @@
           </el-button>
         </div>
       </div>
-      <p class="view-subtitle">查看和治理 Agent 跨会话的长期事实记忆与行为规范画像，维持上下文决策透明与精准控制。</p>
     </div>
 
     <!-- 主 Tabs 切换：事实库 与 用户画像 -->
@@ -60,7 +59,6 @@
             </svg>
           </div>
           <h3>未查询到事实记忆</h3>
-          <p>当您与 Agent 对话时，系统将自动从问答中提炼有价值的技术事实与决策。您也可以点击右上角手动注入一条事实。</p>
         </div>
 
         <div v-else class="memory-grid">
@@ -157,7 +155,6 @@
         <div class="glass-card profile-rules-card">
           <div class="rules-header">
             <h3 class="card-title">自定义工作流规则与行为限制 (custom_rules)</h3>
-            <p class="rules-subtitle">注入到智能体 System Prompt 的强制性前置规范约束。</p>
           </div>
 
           <!-- 新增规则栏 -->
@@ -176,7 +173,7 @@
           <!-- 规则列表 -->
           <div class="rules-list-section">
             <div v-if="profileForm.custom_rules.length === 0" class="no-rules-state">
-              <p>暂无自定义协作规则。您可以输入上述规则并添加。</p>
+              <p>暂无自定义协作规则</p>
             </div>
             <div class="rules-list" v-else>
               <div 
@@ -554,11 +551,6 @@ const formatTime = (timeStr) => {
   letter-spacing: -0.5px;
 }
 
-.view-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
 .tabs-container {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -627,13 +619,6 @@ const formatTime = (timeStr) => {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
-}
-
-.empty-state p {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  max-width: 460px;
-  line-height: 1.5;
 }
 
 .memory-grid {
@@ -829,12 +814,6 @@ const formatTime = (timeStr) => {
 
 .rules-header {
   margin-bottom: 20px;
-}
-
-.rules-subtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 4px;
 }
 
 .add-rule-bar {

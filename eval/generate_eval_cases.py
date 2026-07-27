@@ -1,210 +1,293 @@
-import os
-import sys
+from __future__ import annotations
+
+import argparse
 import json
+import os
 import re
+import sqlite3
+import sys
 from pathlib import Path
-from langchain_text_splitters import MarkdownHeaderTextSplitter
+from typing import Any
 
-# 1. 设置 sys.path 确保能正确加载项目配置和模块
+
 ROOT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT_DIR))
-sys.path.insert(0, str(ROOT_DIR / "project"))
+PROJECT_DIR = ROOT_DIR / "project"
+DEFAULT_PARENT_STORE_DIR = ROOT_DIR / "parent_store" / "public"
+DEFAULT_OUTPUT_PATH = ROOT_DIR / "eval" / "ragas_cases.generated.json"
+DEFAULT_MODEL = "qwen3.6-flash"
 
-import config
 
-def fix_no_proxy():
-    no_proxy = os.environ.get("no_proxy")
-    if no_proxy:
-        os.environ["no_proxy"] = ",".join(
-            item.strip()
-            for item in no_proxy.split(",")
-            if ":" not in item
-        )
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate Ragas eval cases from indexed parent documents."
+    )
+    parser.add_argument(
+        "--parent-store-dir",
+        default=str(DEFAULT_PARENT_STORE_DIR),
+        help="Directory containing parent chunk JSON files.",
+    )
+    parser.add_argument(
+        "--output",
+        default=str(DEFAULT_OUTPUT_PATH),
+        help="Output JSON path for generated Ragas cases.",
+    )
+    parser.add_argument(
+        "--cases-per-doc",
+        type=int,
+        default=1,
+        help="Number of eval cases to generate per document.",
+    )
+    parser.add_argument(
+        "--model",
+        default=os.environ.get("RAGAS_CASE_GENERATOR_MODEL") or DEFAULT_MODEL,
+        help="OpenAI-compatible LLM model used to generate questions and references.",
+    )
+    parser.add_argument(
+        "--max-context-chars",
+        type=int,
+        default=6000,
+        help="Maximum source context characters sent to the generator per case.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Build deterministic cases without calling an LLM.",
+    )
+    return parser.parse_args(argv)
 
-def get_real_source_mapping():
-    """读取 document_metadata.db 建立真实 source 映射名。"""
-    import sqlite3
+
+def load_project_config() -> Any:
+    if str(PROJECT_DIR) not in sys.path:
+        sys.path.insert(0, str(PROJECT_DIR))
+    import config  # type: ignore
+
+    return config
+
+
+def load_source_mapping() -> dict[str, dict[str, str]]:
     db_path = ROOT_DIR / "document_metadata.db"
-    mapping = {}
     if not db_path.exists():
-        return mapping
-    try:
-        conn = sqlite3.connect(db_path)
+        return {}
+
+    mapping: dict[str, dict[str, str]] = {}
+    with sqlite3.connect(db_path) as conn:
         conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("SELECT name, original_name FROM document_metadata")
-        for row in cursor.fetchall():
-            # e.g., mapping['590ce28a6eea4f71afac8567b025da19'] = 'Git'
-            doc_id = Path(row["name"]).stem
-            # 去除 .md 尾缀得到如 'MySQL'
-            original_stem = Path(row["original_name"]).stem
-            mapping[doc_id] = original_stem
-        conn.close()
-    except Exception as e:
-        print(f"Warning: Failed to query document_metadata: {e}")
+        rows = conn.execute(
+            """
+            SELECT document_id, original_name, category, visibility, user_id, status
+            FROM document_metadata
+            """
+        ).fetchall()
+    for row in rows:
+        document_id = row["document_id"] or Path(row["name"]).stem
+        mapping[str(document_id)] = {
+            "original_name": str(row["original_name"] or document_id),
+            "category": str(row["category"] or "general"),
+            "visibility": str(row["visibility"] or "public"),
+            "user_id": str(row["user_id"] or "public"),
+            "status": str(row["status"] or ""),
+        }
     return mapping
 
 
-def main():
-    fix_no_proxy()
-    print("--- Starting Synthetic RAG Evaluation Case Generator ---")
-    
-    # 获取指定的密钥和模型
-    api_key = os.environ.get("ali_api_key") or config.OPENAI_COMPATIBLE_API_KEY
+def normalize_case_id(value: str) -> str:
+    normalized = re.sub(r"[^0-9A-Za-z_\-\u4e00-\u9fff]+", "_", value).strip("_")
+    return normalized[:80] or "case"
+
+
+def compact_context(text: str, max_chars: int) -> str:
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) <= max_chars:
+        return text
+    head = text[: max_chars // 2].rstrip()
+    tail = text[-max_chars // 2 :].lstrip()
+    return f"{head}\n...\n{tail}"
+
+
+def load_parent_documents(parent_store_dir: Path) -> list[dict[str, Any]]:
+    source_mapping = load_source_mapping()
+    grouped: dict[str, dict[str, Any]] = {}
+
+    for path in sorted(parent_store_dir.glob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        content = str(data.get("page_content") or "").strip()
+        metadata = dict(data.get("metadata") or {})
+        document_id = str(metadata.get("document_id") or path.name.split("_parent_")[0])
+        source_info = source_mapping.get(document_id, {})
+
+        doc = grouped.setdefault(
+            document_id,
+            {
+                "document_id": document_id,
+                "source_name": source_info.get("original_name")
+                or metadata.get("source_name")
+                or metadata.get("source")
+                or f"{document_id}.md",
+                "category": source_info.get("category") or "general",
+                "visibility": source_info.get("visibility") or metadata.get("visibility") or "public",
+                "chunks": [],
+            },
+        )
+        if content:
+            doc["chunks"].append(
+                {
+                    "path": str(path),
+                    "parent_id": metadata.get("parent_id") or path.stem,
+                    "content": content,
+                    "metadata": metadata,
+                }
+            )
+
+    documents = [doc for doc in grouped.values() if doc["chunks"]]
+    documents.sort(key=lambda item: str(item["source_name"]).lower())
+    return documents
+
+
+def create_llm(model: str) -> Any:
+    config = load_project_config()
+    api_key = (
+        os.environ.get("RAGAS_CASE_GENERATOR_API_KEY")
+        or os.environ.get("RAGAS_API_KEY")
+        or getattr(config, "OPENAI_COMPATIBLE_API_KEY", None)
+        or getattr(config, "EMBEDDING_API_KEY", None)
+    )
+    base_url = (
+        os.environ.get("RAGAS_CASE_GENERATOR_BASE_URL")
+        or os.environ.get("RAGAS_API_BASE_URL")
+        or getattr(config, "OPENAI_COMPATIBLE_API_BASE_URL", None)
+    )
     if not api_key:
-        print("Error: No API key found. Please configure 'ali_api_key' environment variable.")
-        sys.exit(1)
-        
-    model_name = "deepseek-v4-pro"
-    base_url = config.OPENAI_COMPATIBLE_API_BASE_URL
-    print(f"Using Model: {model_name}")
-    print(f"Base URL: {base_url}")
-    
-    # 2. 初始化 LangChain LLM 实例
+        raise RuntimeError(
+            "Missing Alibaba/OpenAI-compatible API key. Configure project/.env or RAGAS_API_KEY."
+        )
+
     from langchain_openai import ChatOpenAI
-    from langchain_core.messages import SystemMessage, HumanMessage
-    
-    llm = ChatOpenAI(
-        model=model_name,
+
+    return ChatOpenAI(
+        model=model,
         api_key=api_key,
         base_url=base_url,
-        temperature=0.3,
-        model_kwargs={"response_format": {"type": "json_object"}} # 约束输出为 JSON
+        temperature=0.1,
+        model_kwargs={"response_format": {"type": "json_object"}},
     )
 
-    # 3. 读取 markdown_docs/public/ 下的所有技术文档
-    docs_dir = ROOT_DIR / "markdown_docs" / "public"
-    if not docs_dir.exists():
-        print(f"Error: Public docs directory {docs_dir} not found.")
-        sys.exit(1)
 
-    md_files = list(docs_dir.glob("*.md"))
-    if not md_files:
-        print("No markdown files found in the target directory.")
-        sys.exit(0)
+def generate_case_with_llm(
+    llm: Any,
+    *,
+    document: dict[str, Any],
+    context: str,
+    case_index: int,
+) -> dict[str, Any]:
+    from langchain_core.messages import HumanMessage, SystemMessage
 
-    # 获取原始源文件名映射字典
-    source_mapping = get_real_source_mapping()
-    
-    # 读取各文件内容，统计权重
-    doc_contents = {}
-    for path in md_files:
-        with open(path, "r", encoding="utf-8") as f:
-            doc_contents[path] = f.read()
-
-    # 4. 根据文件内容长度按比例分配总计 20 个问题的指标
-    total_len = sum(len(content) for content in doc_contents.values())
-    target_total_questions = 20
-    
-    distribution = {}
-    for path, content in doc_contents.items():
-        weight = len(content) / total_len
-        allocated = max(1, round(weight * target_total_questions))
-        distribution[path] = allocated
-
-    print("\nAllocated Question Count per Document:")
-    for path, count in distribution.items():
-        print(f"  {path.name} (Len: {len(doc_contents[path])}) -> Allocated: {count} questions")
-
-    # 5. 切分文档并生成问题
-    splitter = MarkdownHeaderTextSplitter(
-        headers_to_split_on=config.HEADERS_TO_SPLIT_ON,
-        strip_headers=False
+    system_prompt = (
+        "你是 RAG 自动评测集设计专家。请只基于给定文档片段生成 1 条中文评测样本。"
+        "问题要像真实用户会问的技术/业务问题，标准答案必须能被文档片段直接支持。"
+        "不要引入文档片段之外的事实。严格输出 JSON，字段为 question、reference、tags。"
     )
-    
-    synthetic_cases = []
-    case_counter = 0
+    user_prompt = (
+        f"文档名：{document['source_name']}\n"
+        f"分类：{document['category']}\n"
+        f"片段：\n{context}\n\n"
+        "输出格式："
+        "{\"question\":\"...\",\"reference\":\"...\",\"tags\":[\"...\"]}"
+    )
+    response = llm.invoke([SystemMessage(content=system_prompt), HumanMessage(content=user_prompt)])
+    raw = str(response.content).strip()
+    data = json.loads(raw)
+    question = str(data.get("question") or "").strip()
+    reference = str(data.get("reference") or "").strip()
+    tags = [str(tag).strip() for tag in data.get("tags") or [] if str(tag).strip()]
+    if not question or not reference:
+        raise ValueError(f"Generator returned incomplete case: {raw[:300]}")
 
-    for path, target_count in distribution.items():
-        doc_id = path.stem
-        # 得到出处映射名称，如 MySQL.md ➡️ MySQL
-        mapped_source_name = source_mapping.get(doc_id, doc_id)
-        if mapped_source_name.endswith(".md"):
-            mapped_source_name = mapped_source_name[:-3]
-            
-        print(f"\nProcessing document: {path.name} (mapped as: {mapped_source_name})")
-        parent_chunks = splitter.split_text(doc_contents[path])
-        
-        # 挑选长度足够（大于 150 字符）的段落进行提问抽取
-        valid_chunks = [
-            chunk for chunk in parent_chunks 
-            if len(chunk.page_content.strip()) > 150
-        ]
-        if not valid_chunks:
-            valid_chunks = parent_chunks # 降级
+    source_stem = Path(str(document["source_name"])).stem
+    return {
+        "id": normalize_case_id(f"{source_stem}_{case_index:02d}"),
+        "question": question,
+        "reference": reference,
+        "reference_contexts": [context],
+        "expected_sources": [str(document["source_name"])],
+        "tags": sorted(set([str(document["category"]), source_stem, *tags])),
+        "answerable": True,
+        "metadata": {
+            "document_id": document["document_id"],
+            "source_name": document["source_name"],
+            "generated_by": "eval/generate_eval_cases.py",
+            "generator_model": DEFAULT_MODEL,
+        },
+    }
 
-        # 弹性间隔选取段落，确保知识点覆盖均匀
-        step = max(1, len(valid_chunks) // target_count)
-        selected_chunks = []
-        for i in range(target_count):
-            idx = (i * step) % len(valid_chunks)
-            selected_chunks.append(valid_chunks[idx])
 
-        # 限制只保留唯一的段落，去重
-        seen_contents = set()
-        unique_selected_chunks = []
-        for chunk in selected_chunks:
-            text = chunk.page_content.strip()
-            if text not in seen_contents:
-                seen_contents.add(text)
-                unique_selected_chunks.append(chunk)
+def build_dry_case(*, document: dict[str, Any], context: str, case_index: int) -> dict[str, Any]:
+    source_stem = Path(str(document["source_name"])).stem
+    question = f"请概括 {source_stem} 文档中这一段的核心内容是什么？"
+    reference = compact_context(context, 900)
+    return {
+        "id": normalize_case_id(f"{source_stem}_{case_index:02d}"),
+        "question": question,
+        "reference": reference,
+        "reference_contexts": [context],
+        "expected_sources": [str(document["source_name"])],
+        "tags": sorted(set([str(document["category"]), source_stem, "dry_run"])),
+        "answerable": True,
+        "metadata": {
+            "document_id": document["document_id"],
+            "source_name": document["source_name"],
+            "generated_by": "eval/generate_eval_cases.py",
+            "generator_model": "dry-run",
+        },
+    }
 
-        # 调配生成
-        for idx_c, chunk in enumerate(unique_selected_chunks):
-            chunk_content = chunk.page_content.strip()
-            case_counter += 1
-            case_id = f"synthetic_{mapped_source_name.lower()}_{case_counter}"
-            
-            print(f"  [{case_id}] Requesting LLM to generate case...")
-            
-            system_prompt = (
-                "You are an expert technical QA case designer. You will read the provided document snippet "
-                "and generate exactly one representative question that users might ask based on this context. "
-                "You must also extract 3 to 4 specific, exact core technical terminology keywords or phrases from the text "
-                "that are essential for a correct answer. These keywords will be used for auto-grading.\n\n"
-                "You must return the result strictly in JSON format as follows:\n"
-                "{\n"
-                "  \"question\": \"The professional technical question...\",\n"
-                "  \"expected_keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"]\n"
-                "}"
-            )
-            
-            user_content = f"--- DOCUMENT CONTENT START ---\n{chunk_content}\n--- DOCUMENT CONTENT END ---"
-            
-            try:
-                response = llm.invoke([
-                    SystemMessage(content=system_prompt),
-                    HumanMessage(content=user_content)
-                ])
-                res_json = json.loads(response.content.strip())
-                
-                question = res_json.get("question")
-                expected_keywords = res_json.get("expected_keywords") or []
-                
-                if not question:
-                    raise ValueError("Generated question is empty.")
-                    
-                case_item = {
-                    "id": case_id,
-                    "question": question,
-                    "expected_keywords": [str(kw) for kw in expected_keywords if kw],
-                    "expected_sources": [mapped_source_name],
-                    "expected_answerable": True
-                }
-                synthetic_cases.append(case_item)
-                print(f"    - Generated Question: {question}")
-                print(f"    - Expected Keywords: {expected_keywords}")
-                
-            except Exception as e:
-                print(f"    - Failed to generate case for chunk {idx_c} in {path.name}: {e}")
 
-    # 6. 保存生成的评测文件
-    output_path = ROOT_DIR / "eval" / "eval_cases_synthetic.json"
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(synthetic_cases, f, ensure_ascii=False, indent=2)
+def select_contexts(document: dict[str, Any], cases_per_doc: int, max_chars: int) -> list[str]:
+    chunks = list(document["chunks"])
+    if cases_per_doc <= 1:
+        best = max(chunks, key=lambda item: len(item["content"]))
+        return [compact_context(best["content"], max_chars)]
 
-    print(f"\n[OK] Success! Generated {len(synthetic_cases)} synthetic evaluation cases.")
+    step = max(1, len(chunks) // cases_per_doc)
+    selected = []
+    for index in range(cases_per_doc):
+        chunk = chunks[min(index * step, len(chunks) - 1)]
+        selected.append(compact_context(chunk["content"], max_chars))
+    return selected
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    parent_store_dir = Path(args.parent_store_dir)
+    output_path = Path(args.output)
+    documents = load_parent_documents(parent_store_dir)
+    if not documents:
+        raise RuntimeError(f"No parent documents found under {parent_store_dir}")
+
+    llm = None if args.dry_run else create_llm(args.model)
+    cases: list[dict[str, Any]] = []
+    for document in documents:
+        contexts = select_contexts(document, args.cases_per_doc, args.max_context_chars)
+        for local_index, context in enumerate(contexts, start=1):
+            if llm is None:
+                case = build_dry_case(document=document, context=context, case_index=local_index)
+            else:
+                case = generate_case_with_llm(
+                    llm,
+                    document=document,
+                    context=context,
+                    case_index=local_index,
+                )
+                case["metadata"]["generator_model"] = args.model
+            cases.append(case)
+            print(f"[OK] {case['id']}: {case['question']}")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(cases, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\nGenerated {len(cases)} Ragas cases from {len(documents)} documents.")
     print(f"Saved to: {output_path}")
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

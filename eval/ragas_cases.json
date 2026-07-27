@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ragas_demo_bplus_tree",
+    "question": "B+ Tree 的原理是什么？它在数据库索引中有什么优势？",
+    "reference": "B+ Tree 是一种多路平衡查找树，非叶子节点主要保存键和指针，叶子节点保存数据或主键并按顺序连接。它能降低树高、减少磁盘 IO，并且适合范围查询。",
+    "reference_contexts": [
+      "B+ Tree 是数据库索引常用的数据结构。非叶子节点保存键和子节点指针，叶子节点保存完整记录或主键，并通过链表顺序连接。相比普通二叉树，B+ Tree 树高更低，磁盘 IO 次数更少，也更适合范围扫描。"
+    ],
+    "expected_sources": ["MySQL"],
+    "tags": ["mysql", "index", "retrieval"]
+  },
+  {
+    "id": "ragas_demo_redis_types",
+    "question": "Redis 主要支持哪些基本数据类型？",
+    "reference": "Redis 常见基本数据类型包括 String、List、Hash、Set 和 Sorted Set。它们分别适合计数、队列、对象结构、去重集合和排行榜等场景。",
+    "reference_contexts": [
+      "Redis 支持 String、List、Hash、Set、Sorted Set 等基本数据类型。String 可用于缓存和计数，List 可用于队列，Hash 可表示对象，Set 可用于去重集合，Sorted Set 可用于排行榜。"
+    ],
+    "expected_sources": ["Redis"],
+    "tags": ["redis", "data-types", "generation"]
+  }
+]

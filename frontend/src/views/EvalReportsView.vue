@@ -4,7 +4,6 @@
     <div class="view-header animate-fade-in">
       <div class="header-info">
         <h2>系统评估报告</h2>
-        <p class="view-subtitle">查看 RAG 系统批量评估历史、指标达成情况、失败原因分布及用例明细。</p>
       </div>
       <el-button 
         type="primary" 
@@ -83,10 +82,6 @@
             <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
           <h3>暂无已选评估报告</h3>
-          <p class="empty-desc">请确保在后端服务器对应的终端内运行了评估脚本生成报告。</p>
-          <div class="command-box">
-            <code>.\.venv\Scripts\python.exe -X utf8 eval\run_rag_eval.py</code>
-          </div>
         </div>
 
         <div v-else class="details-content">
@@ -792,11 +787,6 @@ onMounted(() => {
   letter-spacing: -0.5px;
 }
 
-.view-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
 .refresh-btn {
   display: flex;
   align-items: center;
@@ -974,23 +964,6 @@ onMounted(() => {
   font-size: 17px;
   font-weight: 600;
   color: var(--text-primary);
-}
-
-.empty-desc {
-  font-size: 13.5px;
-  color: var(--text-secondary);
-  max-width: 320px;
-}
-
-.command-box {
-  background-color: rgba(9, 13, 22, 0.6);
-  border: 1px solid var(--border-color);
-  padding: 12px 18px;
-  border-radius: var(--border-radius-sm);
-  font-family: monospace;
-  font-size: 12.5px;
-  color: var(--color-primary-hover);
-  margin-top: 8px;
 }
 
 .details-content {

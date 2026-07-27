@@ -26,6 +26,11 @@ agent_memory.db-shm
 eval/reports/*.json
 eval/reports/*.md
 !eval/reports/.gitkeep
+eval/ragas_reports/*.json
+eval/ragas_reports/*.md
+eval/ragas_reports/*.csv
+!eval/ragas_reports/.gitkeep
+eval/ragas_cases.generated.json
 logs/
 __pycache__/
 .vscode/

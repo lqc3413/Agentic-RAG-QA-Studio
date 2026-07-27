@@ -10,14 +10,17 @@
         <span class="pulse-ring"></span>
         服务状态: {{ isConnected ? '已连接' : '离线' }}
       </span>
-      <span v-if="authStore.user" class="user-chip">{{ authStore.user.username }}</span>
+      <span v-if="authStore.user" class="user-chip" :title="displayName">
+        <span class="user-avatar" aria-hidden="true">{{ avatarText }}</span>
+        <span class="user-name">{{ displayName }}</span>
+      </span>
       <button class="logout-btn" type="button" @click="handleLogout">退出</button>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
@@ -26,6 +29,8 @@ const isConnected = ref(false)
 let interval = null
 const authStore = useAuthStore()
 const router = useRouter()
+const displayName = computed(() => authStore.user?.username || '')
+const avatarText = computed(() => displayName.value.slice(0, 1).toUpperCase())
 
 const checkHealth = async () => {
   try {
@@ -134,12 +139,47 @@ const handleLogout = async () => {
 }
 
 .user-chip {
-  color: var(--text-secondary);
+  min-width: 0;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
   font-size: 13px;
-  padding: 4px 8px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: 0 10px 0 6px;
+  border-radius: 999px;
   border: 1px solid var(--border-color);
-  background: rgba(9, 13, 22, 0.5);
+  background: var(--bg-tertiary);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.user-name {
+  min-width: 0;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .user-chip {
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
 }
 
 .logout-btn {

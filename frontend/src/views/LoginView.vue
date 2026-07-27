@@ -9,7 +9,6 @@
           <span class="logo-dot"></span><span class="logo-dot"></span><span class="logo-dot"></span>
         </div>
         <h1>Agentic RAG QA Studio</h1>
-        <p>进入您的智能会话、记忆和知识库管理区</p>
       </div>
 
       <!-- 登录/注册胶囊滑块 Tab -->
@@ -142,15 +141,7 @@ const handleSubmit = async () => {
   font-size: 19px;
   font-weight: 850;
   color: #090B1E;
-  margin-bottom: 8px;
   letter-spacing: -0.5px;
-}
-
-.brand-header p {
-  font-size: 12.5px;
-  color: #5e6278;
-  line-height: 1.5;
-  margin: 0;
 }
 
 /* iOS 胶囊分段 Tab */

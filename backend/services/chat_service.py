@@ -22,13 +22,17 @@ class ChatService:
 
     MAX_FACT_MEMORIES = 5
 
-    def __init__(self, rag_system):
+    def __init__(self, rag_system, *, enable_memory: bool = True):
         """保存已经初始化好的 RAGSystem 实例。"""
         self.rag_system = rag_system
-        from db.agent_memory_manager import AgentMemoryManager
-        from db.user_manager import UserManager
-        self.memory_manager = AgentMemoryManager()
-        self.user_manager = UserManager()
+        self.enable_memory = enable_memory
+        self.memory_manager = None
+        self.user_manager = None
+        if enable_memory:
+            from db.agent_memory_manager import AgentMemoryManager
+            from db.user_manager import UserManager
+            self.memory_manager = AgentMemoryManager()
+            self.user_manager = UserManager()
 
     async def ask(self, message: str, session_id: str = None, user_id: str = None) -> ChatResponse:
         """执行非流式问答，主要用于兼容普通 JSON 响应。"""
@@ -188,9 +192,10 @@ class ChatService:
                     ))
 
             # 2. 异步触发长期记忆抽取（简化版：单次 LLM 调用完成画像更新 + 事实提取 + 冲突删除）
-            from rag_agent.memory_extractor import MemoryExtractor
-            extractor = MemoryExtractor(memory_manager=self.memory_manager, user_manager=self.user_manager)
-            asyncio.create_task(extractor.extract_and_update(message.strip(), clean_answer, session_id, user_id=user_id))
+            if self.enable_memory:
+                from rag_agent.memory_extractor import MemoryExtractor
+                extractor = MemoryExtractor(memory_manager=self.memory_manager, user_manager=self.user_manager)
+                asyncio.create_task(extractor.extract_and_update(message.strip(), clean_answer, session_id, user_id=user_id))
 
             return ChatResponse(
                 answer=clean_answer,
@@ -243,6 +248,7 @@ class ChatService:
                     "score": float(item.get("score") or 0.0),
                     "threshold": float(item.get("threshold") or 0.0),
                     "rerank_score": item.get("rerank_score"),
+                    "content": item.get("content", ""),
                     "content_preview": item.get("content_preview", ""),
                     "source_key": source_key,
                 })
@@ -263,6 +269,7 @@ class ChatService:
                 threshold=float(item.get("threshold") or 0.0),
                 status=item.get("status") or "rejected_low_score",
                 content_preview=item.get("content_preview") or "",
+                content=item.get("content") or None,
                 rejection_reason=item.get("rejection_reason"),
                 rerank_score=rerank_score,
                 rank_before_rerank=item.get("rank_before_rerank"),
@@ -352,6 +359,7 @@ class ChatService:
                         "content_hash": candidate.content_hash,
                         "estimated_tokens": candidate.estimated_tokens,
                         "content_preview": candidate.content_preview,
+                        "content": candidate.content,
                     }
                     for candidate in trace.candidates
                 ],
@@ -371,6 +379,7 @@ class ChatService:
                         "content_hash": candidate.content_hash,
                         "estimated_tokens": candidate.estimated_tokens,
                         "content_preview": candidate.content_preview,
+                        "content": candidate.content,
                     }
                     for candidate in trace.selected_results
                 ],
@@ -390,6 +399,7 @@ class ChatService:
                         "content_hash": candidate.content_hash,
                         "estimated_tokens": candidate.estimated_tokens,
                         "content_preview": candidate.content_preview,
+                        "content": candidate.content,
                     }
                     for candidate in trace.rejected_results
                 ],
@@ -787,9 +797,10 @@ class ChatService:
             yield f"data: {json.dumps({'type': 'record_saved', 'data': {'id': record_id}}, ensure_ascii=False)}\n\n"
 
             # 2. 异步触发长期记忆抽取（简化版：单次 LLM 调用完成画像更新 + 事实提取 + 冲突删除）
-            from rag_agent.memory_extractor import MemoryExtractor
-            extractor = MemoryExtractor(memory_manager=self.memory_manager, user_manager=self.user_manager)
-            asyncio.create_task(extractor.extract_and_update(message.strip(), clean_answer, session_id, user_id=user_id))
+            if self.enable_memory:
+                from rag_agent.memory_extractor import MemoryExtractor
+                extractor = MemoryExtractor(memory_manager=self.memory_manager, user_manager=self.user_manager)
+                asyncio.create_task(extractor.extract_and_update(message.strip(), clean_answer, session_id, user_id=user_id))
 
         except Exception as e:
             traceback.print_exc()
@@ -811,6 +822,9 @@ class ChatService:
         return f"{user_id}:{session_id}"
 
     def _load_context_memories(self, *, message: str, session_id: str, user_id: str = None) -> tuple[list[str], list[str], list[dict]]:
+        if not self.enable_memory:
+            return [], [], []
+
         """加载用户画像（行为偏好）和长期事实记忆。
 
         简化后的逻辑：

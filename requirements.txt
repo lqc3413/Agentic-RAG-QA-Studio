@@ -2,8 +2,12 @@ fastembed==0.8.0
 fastapi==0.136.3
 # Retained for legacy notebooks that still demonstrate Gradio usage.
 gradio==6.14.0
+pandas==2.3.3
 ipykernel==7.2.0
 langchain-huggingface==1.2.2
+# Ragas 0.4.3 imports legacy langchain_community.chat_models.vertexai at import time.
+langchain-community==0.3.31
+dataclasses-json==0.6.7
 langchain-ollama==1.1.0
 langchain-openai==1.1.6
 langchain-qdrant==1.1.0
@@ -23,3 +27,5 @@ pyjwt
 bcrypt
 psycopg[binary,pool]>=3.1.0
 langgraph-checkpoint-postgres>=2.0.0
+ragas==0.4.3
+datasets>=2.20.0

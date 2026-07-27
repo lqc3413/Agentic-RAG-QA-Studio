@@ -41,12 +41,12 @@ def create_llm():
 class RAGSystem:
     """RAG 系统装配器，负责组装向量库、工具、LLM 和 LangGraph。"""
 
-    def __init__(self, collection_name=config.CHILD_COLLECTION):
+    def __init__(self, collection_name=config.CHILD_COLLECTION, *, enable_qa_records: bool = True):
         """初始化 RAGSystem 依赖的基础组件。"""
         self.collection_name = collection_name
         self.vector_db = VectorDbManager()
         self.parent_store = ParentStoreManager()
-        self.qa_record_manager = QARecordManager()
+        self.qa_record_manager = QARecordManager() if enable_qa_records else None
         self.chunker = DocumentChuncker()
         self.observability = Observability()
         self.agent_graph = None

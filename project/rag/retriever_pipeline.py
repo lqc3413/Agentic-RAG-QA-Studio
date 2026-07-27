@@ -48,9 +48,16 @@ class RetrieverPipeline:
             
         if category and category.strip().lower() != "general":
             filter_conditions.append(
-                qmodels.FieldCondition(
-                    key="metadata.category",
-                    match=qmodels.MatchValue(value=category.strip().lower()),
+                qmodels.Filter(
+                    should=[
+                        qmodels.FieldCondition(
+                            key="metadata.category",
+                            match=qmodels.MatchValue(value=category.strip().lower()),
+                        ),
+                        qmodels.IsEmptyCondition(
+                            is_empty=qmodels.PayloadField(key="metadata.category"),
+                        ),
+                    ]
                 )
             )
             

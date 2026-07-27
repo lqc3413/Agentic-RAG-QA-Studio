@@ -2,7 +2,6 @@
   <div class="documents-view">
     <div class="view-header">
       <h2>文档知识库管理</h2>
-      <p class="view-subtitle">管理我的文档与公共文档。检索时会自动使用我的文档和公共文档。</p>
     </div>
 
     <div class="view-body">
@@ -135,11 +134,6 @@ const confirmClearAll = () => {
   font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
-}
-
-.view-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
 }
 
 .view-body {

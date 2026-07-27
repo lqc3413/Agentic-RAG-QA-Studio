@@ -321,6 +321,23 @@ class TenantDocumentHelperTests(unittest.TestCase):
         self.assertEqual(tenant_filter["should"][0]["match"]["value"], "user-a")
         self.assertNotIn("filter", collection.calls[1])
 
+    def test_retriever_pipeline_category_filter_includes_legacy_public_documents(self):
+        collection = FakeCollection()
+        pipeline = RetrieverPipeline(collection)
+
+        pipeline.run("Redis是什么", user_id="user-a", category="tech")
+
+        payload = collection.calls[0]["filter"].model_dump()
+        category_filter = payload["must"][1]
+        self.assertEqual(
+            category_filter["should"][0]["match"]["value"],
+            "tech",
+        )
+        self.assertEqual(
+            category_filter["should"][1]["is_empty"]["key"],
+            "metadata.category",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -105,6 +105,7 @@ class Candidate(BaseModel):
     threshold: float
     status: str
     content_preview: str
+    content: Optional[str] = None
     rejection_reason: Optional[str] = None
     rerank_score: Optional[float] = None
     rank_before_rerank: Optional[int] = None

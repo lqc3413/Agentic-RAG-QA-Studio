@@ -3,7 +3,6 @@
     <div class="uploader-heading">
       <div>
         <h3 class="panel-title">添加新文档</h3>
-        <p class="panel-desc">支持 PDF / Markdown。普通用户上传到我的文档，单文件最大 5 MB。</p>
       </div>
       <div class="uploader-controls" style="display: flex; gap: 12px; align-items: center;">
         <el-select
@@ -52,11 +51,6 @@
         <div class="el-upload__text">
           将文档拖到此处，或 <em>点击选择</em>
         </div>
-        <template #tip>
-          <div class="upload-tip">
-            仅支持 .pdf / .md，上传目标：{{ visibilityLabel }}
-          </div>
-        </template>
       </el-upload>
     </div>
 
@@ -85,7 +79,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useDocumentStore } from '@/stores/documents'
 import { useAuthStore } from '@/stores/auth'
@@ -109,10 +103,6 @@ const categoryOptions = [
   { label: '技术研发 (tech)', value: 'tech' },
   { label: '财务合同 (finance)', value: 'finance' },
 ]
-
-const visibilityLabel = computed(() => (
-  visibility.value === 'public' ? '公共文档' : '我的文档'
-))
 
 const clearFileList = () => {
   fileList.value = []
@@ -177,12 +167,6 @@ const handleUpload = async () => {
   color: var(--text-primary);
 }
 
-.panel-desc {
-  margin-top: 6px;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
 .visibility-control {
   flex-shrink: 0;
 }
@@ -232,15 +216,9 @@ const handleUpload = async () => {
   font-weight: 500;
 }
 
-.upload-tip,
 .quota-note {
   font-size: 12px;
   color: var(--text-muted);
-}
-
-.upload-tip {
-  margin-top: 10px;
-  text-align: center;
 }
 
 .quota-note {
